@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.colorTheme": "Default Dark+",
+		"python.defaultInterpreterPath": "/usr/bin/python3",
+		"yaml.schemas": {
+			"file:///home/booth/.vscode/extensions/atlassian.atlascode-3.0.3/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml"
+		},
+		"redhat.telemetry.enabled": true,
+		"git.autofetch": true,
+		"git.confirmSync": false,
+		"autoDocstring.docstringFormat": "numpy",
+		"workbench.iconTheme": "vscode-icons",
+		"diffEditor.maxFileSize": 0,
+		"jupyter.askForKernelRestart": false,
+		"atlascode.jira.enabled": false,
+		"atlascode.bitbucket.enabled": true,
+		"explorer.confirmDelete": false,
+		"vsicons.dontShowNewVersionMessage": true,
+		"arduino.useArduinoCli": true,
+		"[python]": {
+			"editor.formatOnType": true,
+			"editor.insertSpaces": true,
+			"editor.tabSize": 4,
+			"editor.formatOnSave": true
+		},
+		"terminal.integrated.enableMultiLinePasteWarning": false,
+		"files.autoSave": "afterDelay",
+		"python.linting.pylintArgs": [
+			"--extension-pkg-whitelist=pygame",
+		],
+		"editor.formatOnSave": true,
+		"git.enableSmartCommit": true,
+		"git.ignoreRebaseWarning": true,
+	},
+}
