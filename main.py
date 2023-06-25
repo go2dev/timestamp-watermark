@@ -12,14 +12,17 @@ def add_watermark(image_path, watermark_text, output_dir):
     with Image.open(image_path) as img:
         width, height = img.size
 
-        draw = ImageDraw.Draw(img)
-        textsize = 40  # this might need to be adjusted depending on the image size
+        # Create a transparent overlay
+        overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+
+        draw = ImageDraw.Draw(overlay)
+        textsize = 120  # this might need to be adjusted depending on the image size
         font = ImageFont.truetype(
-            "arial.ttf", textsize
+            "DS-DIGI.TTF", textsize
         )  # choose another font if you like
 
         # calculate the x,y coordinates of the text
-        margin = 10
+        margin = 40
         textwidth, textheight = draw.textbbox(
             (0, 0, width, height), watermark_text, font=font
         )[2:4]
@@ -28,15 +31,24 @@ def add_watermark(image_path, watermark_text, output_dir):
 
         # draw watermark in the bottom right corner
         draw.text(
-            (x, y), watermark_text, font=font, fill=(255, 0, 0, 10)
-        )  # RGBA for semi-transparent red
+            (x, y), watermark_text, font=font, fill=(255, 0, 0, 128)
+        )  # RGBA for semi-transparent red, last number sets the alpha level
+
+        # Convert the original image to 'RGBA' if it is not already
+        if img.mode != "RGBA":
+            img = img.convert("RGBA")
+
+        # Blend original image and overlay with alpha
+        watermarked = Image.alpha_composite(img, overlay)
 
         # Make sure output directory exists
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         # Save the new image to the output directory
-        img.save(os.path.join(output_dir, os.path.basename(image_path)))
+        watermarked.convert(img.mode).save(
+            os.path.join(output_dir, os.path.basename(image_path))
+        )
 
 
 def add_watermarks_to_tiff_files(directory, watermark_prefix=""):
