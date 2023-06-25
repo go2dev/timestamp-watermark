@@ -28,7 +28,7 @@ def add_watermark(image_path, watermark_text, output_dir):
 
         # draw watermark in the bottom right corner
         draw.text(
-            (x, y), watermark_text, font=font, fill=(255, 0, 0, 128)
+            (x, y), watermark_text, font=font, fill=(255, 0, 0, 10)
         )  # RGBA for semi-transparent red
 
         # Make sure output directory exists
