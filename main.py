@@ -1,6 +1,8 @@
 import os
 import shutil
 from datetime import datetime
+from multiprocessing import Pool, cpu_count
+import itertools
 import warnings
 import piexif
 from PIL import Image, ImageDraw, ImageFont
@@ -51,6 +53,25 @@ def add_watermark(image_path, watermark_text, output_dir):
         )
 
 
+def process_file(args):
+    filename, directory, watermark_prefix = args
+    filepath = os.path.join(directory, filename)
+
+    # Fetch the date taken
+    exif_dict = piexif.load(filepath)
+    if piexif.ExifIFD.DateTimeOriginal in exif_dict["Exif"]:
+        date_taken_str = exif_dict["Exif"][piexif.ExifIFD.DateTimeOriginal].decode(
+            "utf-8"
+        )
+        date_taken = datetime.strptime(date_taken_str, "%Y:%m:%d %H:%M:%S")
+        watermark_text = (
+            watermark_prefix + " " + date_taken.strftime("%Y-%m-%d %H:%M:%S")
+        )
+
+        # Add the watermark to the image
+        add_watermark(filepath, watermark_text, os.path.join(directory, "output"))
+
+
 def add_watermarks_to_tiff_files(directory, watermark_prefix=""):
     # Collect all TIFF files in directory
     tiff_files = [
@@ -64,25 +85,16 @@ def add_watermarks_to_tiff_files(directory, watermark_prefix=""):
     # Initialize progress bar
     progress_bar = tqdm(total=len(tiff_files), ncols=80)
 
-    for filename in tiff_files:
-        filepath = os.path.join(directory, filename)
-
-        # Fetch the date taken
-        exif_dict = piexif.load(filepath)
-        if piexif.ExifIFD.DateTimeOriginal in exif_dict["Exif"]:
-            date_taken_str = exif_dict["Exif"][piexif.ExifIFD.DateTimeOriginal].decode(
-                "utf-8"
-            )
-            date_taken = datetime.strptime(date_taken_str, "%Y:%m:%d %H:%M:%S")
-            watermark_text = (
-                watermark_prefix + " " + date_taken.strftime("%Y-%m-%d %H:%M:%S")
-            )
-
-            # Add the watermark to the image
-            add_watermark(filepath, watermark_text, os.path.join(directory, "output"))
-
-        # Update the progress bar
-        progress_bar.update(1)
+    with Pool(cpu_count()) as p:
+        for _ in p.imap_unordered(
+            process_file,
+            zip(
+                tiff_files,
+                itertools.repeat(directory),
+                itertools.repeat(watermark_prefix),
+            ),
+        ):
+            progress_bar.update()
 
     # Close the progress bar
     progress_bar.close()
