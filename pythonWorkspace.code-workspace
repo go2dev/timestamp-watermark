@@ -26,7 +26,8 @@
 			"editor.formatOnType": true,
 			"editor.insertSpaces": true,
 			"editor.tabSize": 4,
-			"editor.formatOnSave": true
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "ms-python.black-formatter"
 		},
 		"terminal.integrated.enableMultiLinePasteWarning": false,
 		"files.autoSave": "afterDelay",
@@ -36,5 +37,6 @@
 		"editor.formatOnSave": true,
 		"git.enableSmartCommit": true,
 		"git.ignoreRebaseWarning": true,
+		"python.formatting.provider": "none",
 	},
 }
