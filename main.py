@@ -27,7 +27,9 @@ def add_watermark(image_path, watermark_text, output_dir):
         y = height - textheight - margin
 
         # draw watermark in the bottom right corner
-        draw.text((x, y), watermark_text, font=font)
+        draw.text(
+            (x, y), watermark_text, font=font, fill=(255, 0, 0, 128)
+        )  # RGBA for semi-transparent red
 
         # Make sure output directory exists
         if not os.path.exists(output_dir):
@@ -80,7 +82,7 @@ def main():
     # Ignore metadata warnings
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        add_watermarks_to_tiff_files(directory_path, watermark_prefix="Date Taken:")
+        add_watermarks_to_tiff_files(directory_path, watermark_prefix="")
 
 
 if __name__ == "__main__":
