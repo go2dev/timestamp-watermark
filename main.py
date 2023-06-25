@@ -1,6 +1,7 @@
 import os
 import shutil
 from datetime import datetime
+import warnings
 import piexif
 from PIL import Image, ImageDraw, ImageFont
 from tqdm import tqdm
@@ -16,10 +17,12 @@ def add_watermark(image_path, watermark_text, output_dir):
         font = ImageFont.truetype(
             "arial.ttf", textsize
         )  # choose another font if you like
-        textwidth, textheight = draw.textsize(watermark_text, font)
 
         # calculate the x,y coordinates of the text
         margin = 10
+        textwidth, textheight = draw.textbbox(
+            (0, 0, width, height), watermark_text, font=font
+        )[2:4]
         x = width - textwidth - margin
         y = height - textheight - margin
 
@@ -74,7 +77,10 @@ def add_watermarks_to_tiff_files(directory, watermark_prefix=""):
 def main():
     # Replace this with the path to your directory
     directory_path = "g:/ip"
-    add_watermarks_to_tiff_files(directory_path, watermark_prefix="Date Taken:")
+    # Ignore metadata warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        add_watermarks_to_tiff_files(directory_path, watermark_prefix="Date Taken:")
 
 
 if __name__ == "__main__":
